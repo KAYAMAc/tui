@@ -13,6 +13,34 @@ import asyncio
 import subprocess
 import json
 from typing import List, Dict, Any, Optional
+from datetime import datetime, timezone
+
+
+def calculate_age(creation_timestamp: str) -> str:
+    """Calculate human-readable age from Kubernetes creation timestamp"""
+    try:
+        # Parse the ISO 8601 timestamp
+        created = datetime.fromisoformat(creation_timestamp.replace('Z', '+00:00'))
+        now = datetime.now(timezone.utc)
+        
+        # Calculate the difference
+        diff = now - created
+        total_seconds = int(diff.total_seconds())
+        
+        # Convert to human-readable format
+        if total_seconds < 60:
+            return f"{total_seconds}s"
+        elif total_seconds < 3600:
+            minutes = total_seconds // 60
+            return f"{minutes}m"
+        elif total_seconds < 86400:
+            hours = total_seconds // 3600
+            return f"{hours}h"
+        else:
+            days = total_seconds // 86400
+            return f"{days}d"
+    except Exception:
+        return "Unknown"
 
 
 class OperationResultScreen(ModalScreen):
@@ -525,12 +553,12 @@ class ResourcesScreen(Screen):
                             
                             # Calculate age
                             creation_time = item['metadata']['creationTimestamp']
-                            age = "Unknown"  # Simplified for now
+                            age = calculate_age(creation_time)
                             
                             table.add_row(name, ready, status, str(restarts), age)
                     
                     elif resource_type == "services":
-                        table.add_columns("Name", "Type", "Cluster-IP", "External-IP", "Port(s)")
+                        table.add_columns("Name", "Type", "Cluster-IP", "External-IP", "Port(s)", "Age")
                         for item in items:
                             name = item['metadata']['name']
                             self.resource_names.append(name)
@@ -556,7 +584,8 @@ class ResourcesScreen(Screen):
                                 ports.append(port_str)
                             ports_str = ','.join(ports) if ports else 'None'
                             
-                            table.add_row(name, svc_type, cluster_ip, external_ip, ports_str)
+                            age = calculate_age(item['metadata']['creationTimestamp'])
+                            table.add_row(name, svc_type, cluster_ip, external_ip, ports_str, age)
                     
                     elif resource_type == "deployments":
                         table.add_columns("Name", "Ready", "Up-to-date", "Available", "Age")
@@ -573,7 +602,7 @@ class ResourcesScreen(Screen):
                                 f"{ready_replicas}/{replicas}",
                                 str(updated_replicas),
                                 str(available_replicas),
-                                "Unknown"  # Simplified for now
+                                calculate_age(item['metadata']['creationTimestamp'])
                             )
                     
                     else:  # configmaps, secrets, or other resources
@@ -582,7 +611,7 @@ class ResourcesScreen(Screen):
                             name = item['metadata']['name']
                             self.resource_names.append(name)
                             data_count = len(item.get('data', {}))
-                            table.add_row(name, str(data_count), "Unknown")
+                            table.add_row(name, str(data_count), calculate_age(item['metadata']['creationTimestamp']))
                 else:
                     table.add_columns("Message")
                     table.add_row(f"No {resource_type} found in namespace {self.namespace}")

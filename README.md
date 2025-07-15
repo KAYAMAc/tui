@@ -173,10 +173,10 @@ For safety reasons, destructive operations show the kubectl command rather than 
 The dashboard automatically detects all configured Kubernetes contexts and highlights the currently active one.
 
 ### Real-time Resource Information
-- **Pods**: Shows readiness status, restart counts, and current phase
-- **Services**: Displays service types, cluster/external IPs, and port configurations  
-- **Deployments**: Shows replica status and availability
-- **ConfigMaps/Secrets**: Shows the number of data items
+- **Pods**: Shows readiness status, restart counts, current phase, and age since creation
+- **Services**: Displays service types, cluster/external IPs, port configurations, and age
+- **Deployments**: Shows replica status, availability, and age since creation
+- **ConfigMaps/Secrets**: Shows the number of data items and age since creation
 
 ### Interactive Operations
 Click on any resource to see context-sensitive operations. The dashboard automatically adjusts available operations based on the resource type.
@@ -186,6 +186,13 @@ The interface adapts to your terminal size and provides smooth navigation betwee
 
 ### Operation Results Display
 All operation outputs are displayed in scrollable modal windows with proper formatting, making it easy to read logs, descriptions, and other information.
+
+### Age Display Format
+The dashboard shows resource age in a human-readable format similar to kubectl:
+- `45s` - Created less than a minute ago
+- `30m` - Created 30 minutes ago  
+- `2h` - Created 2 hours ago
+- `5d` - Created 5 days ago
 
 ## License
 
