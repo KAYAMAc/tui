@@ -462,6 +462,7 @@ class ResourcesScreen(Screen):
         Binding("3", "show_deployments", "Deployments"),
         Binding("4", "show_configmaps", "ConfigMaps"),
         Binding("5", "show_secrets", "Secrets"),
+        Binding("enter", "select_resource", "Select Resource"),
     ]
     
     def __init__(self, context: str, namespace: str):
@@ -483,14 +484,17 @@ class ResourcesScreen(Screen):
                 Button("Secrets (5)", id="btn-secrets"),
                 classes="resource-buttons"
             ),
-            DataTable(id="resources-table"),
-            Static("\nClick on a resource for operations, or press number keys to switch resources", classes="help"),
-            Static("r to refresh, Esc to go back, q to quit", classes="help"),
+            DataTable(id="resources-table", show_cursor=True),
+            Static("\nUse ↑/↓ to navigate, Enter to select resource, or click on a row", classes="help"),
+            Static("Press number keys to switch resources, r to refresh, Esc to go back, q to quit", classes="help"),
             classes="container"
         )
         yield Footer()
     
     async def on_mount(self) -> None:
+        # Enable cursor navigation on the table
+        table = self.query_one("#resources-table", DataTable)
+        table.cursor_type = "row"
         await self.load_resources("pods")
     
     @on(DataTable.RowSelected)
@@ -663,6 +667,18 @@ class ResourcesScreen(Screen):
     
     async def action_show_secrets(self) -> None:
         await self.load_resources("secrets")
+    
+    def action_select_resource(self) -> None:
+        """Handle Enter key to select the current row"""
+        table = self.query_one("#resources-table", DataTable)
+        if self.resource_names and table.cursor_row < len(self.resource_names):
+            selected_resource = self.resource_names[table.cursor_row]
+            self.app.push_screen(OperationsScreen(
+                self.context, 
+                self.namespace, 
+                self.current_resource, 
+                selected_resource
+            ))
 
 
 class K8sDashboard(App):

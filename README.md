@@ -61,7 +61,8 @@ python cli.py
   - **3**: Deployments
   - **4**: ConfigMaps
   - **5**: Secrets
-- **Click on any resource row** to see available operations
+- **Navigate resources** using **↑/↓** arrow keys
+- **Select a resource** by pressing **Enter** or **clicking on a row** to see available operations
 - Press **r** to refresh the current resource view
 - Press **Esc** to go back to namespace selection
 - Press **q** to quit
@@ -115,6 +116,17 @@ python cli.py
 - **↑/↓**: Navigate lists and tables
 - **Enter**: Select item or execute operation
 - **Click**: Select resource row (on Resources screen)
+
+### Resource Selection Methods
+
+On the Resources screen, you can select a resource to view operations in two ways:
+
+1. **Keyboard Navigation**: 
+   - Use **↑/↓** arrow keys to navigate through the resource list
+   - Press **Enter** to select the highlighted resource
+
+2. **Mouse Interaction**:
+   - **Click directly** on any resource row to select it
 
 ## Operation Safety
 
