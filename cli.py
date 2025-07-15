@@ -500,8 +500,8 @@ class ResourcesScreen(Screen):
     @on(DataTable.RowSelected)
     def on_row_selected(self, event: DataTable.RowSelected) -> None:
         """Handle row selection to show operations menu"""
-        if self.resource_names and event.row_index < len(self.resource_names):
-            selected_resource = self.resource_names[event.row_index]
+        if self.resource_names and event.row < len(self.resource_names):
+            selected_resource = self.resource_names[event.row]
             self.app.push_screen(OperationsScreen(
                 self.context, 
                 self.namespace, 
