@@ -12,6 +12,11 @@ A text-based user interface (TUI) for managing Kubernetes resources using Textua
   - Deployments (with replica status)
   - ConfigMaps (with data count)
   - Secrets (with data count)
+- 🎯 **Interactive Operations**: Click on any resource to perform operations:
+  - **Pods**: Get logs, describe, delete, port forward, exec shell
+  - **Services**: Describe, edit, delete
+  - **Deployments**: Describe, scale, restart, rollout status, edit, delete
+  - **ConfigMaps/Secrets**: Describe, view data, edit, delete
 
 ## Prerequisites
 
@@ -56,9 +61,50 @@ python cli.py
   - **3**: Deployments
   - **4**: ConfigMaps
   - **5**: Secrets
+- **Click on any resource row** to see available operations
 - Press **r** to refresh the current resource view
 - Press **Esc** to go back to namespace selection
 - Press **q** to quit
+
+#### Operations Screen
+- Select an operation from the list using **↑/↓** arrow keys
+- Press **Enter** to execute the selected operation
+- Press **Esc** to go back to resources view
+- Press **q** to quit
+
+#### Operation Results
+- View the output of operations in a modal dialog
+- Press **Esc** or **q** to close the results and return to operations
+
+### Available Operations by Resource Type
+
+#### 📦 Pods
+- **📋 Describe**: Show detailed information about the pod
+- **📜 Get Logs**: Retrieve current logs from the pod
+- **📜 Get Previous Logs**: Retrieve logs from the previous container instance
+- **🔗 Port Forward**: Set up port forwarding (shows command to run)
+- **💻 Exec Shell**: Execute a shell in the pod (shows command to run)
+- **📝 Edit**: Edit the pod resource (shows command to run)
+- **🗑️ Delete**: Delete the pod (shows confirmation command)
+
+#### 🌐 Services
+- **📋 Describe**: Show detailed information about the service
+- **📝 Edit**: Edit the service resource (shows command to run)
+- **🗑️ Delete**: Delete the service (shows confirmation command)
+
+#### 🚀 Deployments
+- **📋 Describe**: Show detailed information about the deployment
+- **📏 Scale**: Scale the deployment (shows scaling commands)
+- **🔄 Restart Rollout**: Restart the deployment rollout (executes immediately)
+- **📊 Rollout Status**: Check the rollout status (executes immediately)
+- **📝 Edit**: Edit the deployment resource (shows command to run)
+- **🗑️ Delete**: Delete the deployment (shows confirmation command)
+
+#### 📄 ConfigMaps & Secrets
+- **📋 Describe**: Show detailed information about the resource
+- **👁️ View Data**: View the data contents in YAML format
+- **📝 Edit**: Edit the resource (shows command to run)
+- **🗑️ Delete**: Delete the resource (shows confirmation command)
 
 ### Keyboard Shortcuts
 
@@ -66,8 +112,31 @@ python cli.py
 - **Esc**: Go back to previous screen
 - **r**: Refresh current view
 - **1-5**: Switch between resource types (on Resources screen)
-- **↑/↓**: Navigate lists
-- **Enter**: Select item
+- **↑/↓**: Navigate lists and tables
+- **Enter**: Select item or execute operation
+- **Click**: Select resource row (on Resources screen)
+
+## Operation Safety
+
+The dashboard implements different safety levels for operations:
+
+### 🟢 Safe Operations (Execute Immediately)
+- Describe resources
+- Get logs
+- View data
+- Check rollout status
+- Restart deployments
+
+### 🟡 Interactive Operations (Show Command)
+- Port forwarding
+- Exec shell
+- Edit resources
+
+### 🔴 Destructive Operations (Show Warning + Command)
+- Delete resources
+- Scale deployments
+
+For safety reasons, destructive operations show the kubectl command rather than executing directly, allowing you to review and run them manually.
 
 ## Requirements
 
@@ -91,6 +160,12 @@ python cli.py
 - Make sure your Kubernetes user/service account has the necessary permissions:
   - `get` permission on namespaces
   - `list` and `get` permissions on pods, services, deployments, configmaps, secrets
+  - Additional permissions for operations you want to perform (e.g., `delete`, `patch`, `update`)
+
+### Operation Failures
+- Verify you have the necessary RBAC permissions for the specific operation
+- Check that the resource still exists (it might have been deleted by another process)
+- Ensure the cluster is accessible and responsive
 
 ## Features in Detail
 
@@ -103,8 +178,14 @@ The dashboard automatically detects all configured Kubernetes contexts and highl
 - **Deployments**: Shows replica status and availability
 - **ConfigMaps/Secrets**: Shows the number of data items
 
+### Interactive Operations
+Click on any resource to see context-sensitive operations. The dashboard automatically adjusts available operations based on the resource type.
+
 ### Responsive Interface
-The interface adapts to your terminal size and provides smooth navigation between different views.
+The interface adapts to your terminal size and provides smooth navigation between different views with modal dialogs for operation results.
+
+### Operation Results Display
+All operation outputs are displayed in scrollable modal windows with proper formatting, making it easy to read logs, descriptions, and other information.
 
 ## License
 
