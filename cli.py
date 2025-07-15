@@ -678,7 +678,6 @@ class K8sDashboard(App):
     DataTable {
         height: 1fr;
         margin: 1;
-        cursor: pointer;
     }
     
     Button {
@@ -707,7 +706,7 @@ class K8sDashboard(App):
         background: $surface;
         color: $text;
         padding: 1;
-        border: solid $muted;
+        border: solid $primary;
     }
     
     .modal-help {
